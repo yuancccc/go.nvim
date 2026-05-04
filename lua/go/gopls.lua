@@ -148,7 +148,7 @@ local function apply_changes(cmd, args)
     return
   end
   log('applying changes', cmd, args)
-  gopls.request('workspace/executeCommand', {
+  gopls:request('workspace/executeCommand', {
     command = cmd,
     arguments = args,
   }, function(_err, changes)

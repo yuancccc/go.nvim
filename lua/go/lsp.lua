@@ -252,12 +252,10 @@ M.codeaction = function(args)
   local filters = args.filters or {}
   local hdlr = args.hdlr
   local range = args.range or false
-  vim.validate({
-    gopls_cmd = { gopls_cmd, 'string' },
-    only = { only, 'string', true },
-    filters = { filters, 'table', true },
-    hdlr = { hdlr, 'function', true },
-  })
+  vim.validate('gopls_cmd', gopls_cmd, 'string')
+  vim.validate('only', only, 'string', true)
+  vim.validate('filters', filters, 'table', true)
+  vim.validate('hdlr', hdlr, 'function', true)
 
   hdlr = hdlr or function() end
 
@@ -299,7 +297,7 @@ M.codeaction = function(args)
         fn(command, enriched_ctx)
         hdlr()
       else
-        gopls.request('workspace/executeCommand', {
+        gopls:request('workspace/executeCommand', {
           command = command.command,
           arguments = command.arguments,
           workDoneToken = command.workDoneToken,
@@ -353,7 +351,7 @@ M.codeaction = function(args)
 
     local action = actions[1]
     -- resolve
-    gopls.request('codeAction/resolve', action, function(_err, resolved_action, ctx, config)
+    gopls:request('codeAction/resolve', action, function(_err, resolved_action, ctx, config)
       trace('codeAction/resolve', resolved_action, ctx, config)
       if _err then
         log('error', _err)
@@ -373,7 +371,7 @@ M.codeaction = function(args)
     end, bufnr)
   end
   trace('gopls.codeAction', gopls_cmd, only, bufnr, params)
-  gopls.request('textDocument/codeAction', params, ca_hdlr, bufnr)
+  gopls:request('textDocument/codeAction', params, ca_hdlr, bufnr)
 end
 
 M.gopls_on_attach = on_attach
@@ -561,7 +559,7 @@ function M.document_symbols(opts)
   local symbols
   local c = M.client()
   if c ~= nil then
-    return c.request_sync('textDocument/documentSymbol', params, opts.timeout or 1000, vim.api.nvim_get_current_buf())
+    return c:request_sync('textDocument/documentSymbol', params, opts.timeout or 1000, vim.api.nvim_get_current_buf())
   end
 end
 
