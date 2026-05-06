@@ -1,5 +1,5 @@
 ---
-base: lua52
+base: lua51
 name: vim
 globals:
   ListView:
@@ -19,8 +19,10 @@ globals:
   packer_plugins:
     any: true
   _G:
+    any: true
     property: new-fields
   _GO_NVIM_CFG:
+    any: true
     property: new-fields
   after_each:
     args:
@@ -29,7 +31,6 @@ globals:
     any: true
   assert.equals:
     args:
-      - type: any
       - type: any
       - required: false
         type: any

@@ -163,6 +163,26 @@ return {
       require('go.goget').run(opts.fargs)
     end, { nargs = '*' })
 
+    create_cmd('GoFix', function(opts)
+      local runner = require('go.runner')
+      local cmd = { _GO_NVIM_CFG.go or 'go', 'fix' }
+      local args = opts.fargs or {}
+      vim.list_extend(cmd, args)
+      local fixopts = {
+        cwd = vfn.expand('%:p:h'),
+        on_exit = function(code)
+          if code == 0 then
+            vim.schedule(function()
+              print('go fix completed successfully')
+            end)
+          else
+            vim.notify('go fix failed with code ' .. tostring(code), vim.log.levels.ERROR)
+          end
+        end,
+      }
+      runner.run(cmd, fixopts)
+    end, { nargs = '*' })
+
     create_cmd('GoTool', function(opts)
       require('go.gotool').run(opts.fargs)
     end, {
@@ -653,27 +673,29 @@ return {
 
     create_cmd('GoAI', function(opts)
       require('go.ai').run(opts)
-    end, { nargs = '*',
-    complete = function(_, _, _)
-      return {
-        '-f', -- full command catalog from go.txt
-        [['test this function']],
-        [['test this file']],
-        [['add tags to this struct']],
-        [['run AI code review']],
-        [['explain this code']],
-        [['refactor this code']],
-        [['check for bugs']],
-        [['examine error handling']],
-        [['simplify this']],
-        [['what does this do']],
-        [['suggest improvements']],
-        [['check concurrency safety']],
-        [['create a commit summary']],
-        [['convert to idiomatic Go']],  
-      }
-    end,
-    range = true })
+    end, {
+      nargs = '*',
+      complete = function(_, _, _)
+        return {
+          '-f', -- full command catalog from go.txt
+          [['test this function']],
+          [['test this file']],
+          [['add tags to this struct']],
+          [['run AI code review']],
+          [['explain this code']],
+          [['refactor this code']],
+          [['check for bugs']],
+          [['examine error handling']],
+          [['simplify this']],
+          [['what does this do']],
+          [['suggest improvements']],
+          [['check concurrency safety']],
+          [['create a commit summary']],
+          [['convert to idiomatic Go']],
+        }
+      end,
+      range = true,
+    })
 
     ---@param args table the opts table passed by nvim_create_user_command
     ---@return table parsed options
@@ -769,7 +791,9 @@ return {
 
         local submitted = false
         local function submit()
-          if submitted then return end
+          if submitted then
+            return
+          end
           submitted = true
           local lines = vim.api.nvim_buf_get_lines(win.buf, 0, -1, false)
           win:close()
@@ -803,7 +827,9 @@ return {
 
         if use_mcp then
           local opts = parsed
-          if extra_opts then opts = vim.tbl_extend('force', opts, extra_opts) end
+          if extra_opts then
+            opts = vim.tbl_extend('force', opts, extra_opts)
+          end
           require('go.mcp.review').review(opts)
         else
           if extra_opts and extra_opts.message then
@@ -869,7 +895,8 @@ return {
       range = true,
       complete = function(_, _, _)
         return {
-          '-h', '--history',
+          '-h',
+          '--history',
           'refactor this',
           'add error handling',
           'add context.Context parameter',
@@ -932,19 +959,16 @@ return {
           end
         end
         vim.notify(table.concat(lines, '\n'), vim.log.levels.INFO)
-
       elseif subcmd == 'delete' then
         if session.delete() then
           vim.notify('[GoAISession]: session deleted for current workspace', vim.log.levels.INFO)
         else
           vim.notify('[GoAISession]: no session file found', vim.log.levels.WARN)
         end
-
       elseif subcmd == 'trim' then
         local days = tonumber(fargs[2])
         local removed = session.trim(days)
         vim.notify(string.format('[GoAISession]: trimmed %d old entries', removed), vim.log.levels.INFO)
-
       elseif subcmd == 'list' then
         local all = session.list_all()
         if #all == 0 then
@@ -956,24 +980,23 @@ return {
           table.insert(lines, string.format('  %s (%d bytes)', s.workspace_key, s.size_bytes))
         end
         vim.notify(table.concat(lines, '\n'), vim.log.levels.INFO)
-
       elseif subcmd == 'show' then
         local cmd_filter = fargs[2] -- optional: chat, edit, review, explain
         local entry = session.last_response(cmd_filter)
         if not entry then
-          local msg = cmd_filter
-            and string.format('[GoAISession]: no %s response found', cmd_filter)
+          local msg = cmd_filter and string.format('[GoAISession]: no %s response found', cmd_filter)
             or '[GoAISession]: no response found in session'
           vim.notify(msg, vim.log.levels.WARN)
           return
         end
-        local title = string.format(' %s (%s) ', entry.command or 'AI',
-          os.date('%H:%M:%S', entry.timestamp))
+        local title = string.format(' %s (%s) ', entry.command or 'AI', os.date('%H:%M:%S', entry.timestamp))
         local ai_ui = require('go.ai.ui')
         ai_ui.show_markdown_float(entry.content, title)
-
       else
-        vim.notify('[GoAISession]: unknown subcommand: ' .. subcmd .. '. Use: info, show [cmd], delete, trim [days], list', vim.log.levels.WARN)
+        vim.notify(
+          '[GoAISession]: unknown subcommand: ' .. subcmd .. '. Use: info, show [cmd], delete, trim [days], list',
+          vim.log.levels.WARN
+        )
       end
     end, {
       nargs = '*',

@@ -325,6 +325,10 @@ nvim-lsp support goimports by default. The plugin provided a new formatter, goli
 
 {opts} : `-a` format all buffers
 
+## GoFix
+
+Run `go fix` with args
+
 ## GoImplements
 
 nvim-lsp/gopls support implementation by default. The plugin provides this command for people migrate from vim-go
@@ -665,14 +669,14 @@ if err != nil {
 `GoAI` is a natural-language command dispatcher — it translates plain English into the correct go.nvim
 command using an LLM (Copilot or OpenAI-compatible). Visual ranges are forwarded to range-capable commands.
 
-| Command                                          | Description                                                      |
-| ------------------------------------------------ | ---------------------------------------------------------------- |
-| GoAI 'run unit test for tags test'               | Translates to `GoTest -tags=test`                                |
-| GoAI 'add json tags to struct'                   | Translates to `GoAddTag json`                                    |
-| GoAI 'format file with gofumpt'                  | Translates to `GoFmt gofumpt`                                    |
-| :'<,'>GoAI 'convert this json to struct'         | Range is forwarded to `GoJson2Struct`                            |
-| GoAI -f '{request}'                              | Include the full command catalog in the prompt (better accuracy)  |
-| GoAI                                             | Open an interactive prompt                                       |
+| Command                                  | Description                                                      |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| GoAI 'run unit test for tags test'       | Translates to `GoTest -tags=test`                                |
+| GoAI 'add json tags to struct'           | Translates to `GoAddTag json`                                    |
+| GoAI 'format file with gofumpt'          | Translates to `GoFmt gofumpt`                                    |
+| :'<,'>GoAI 'convert this json to struct' | Range is forwarded to `GoJson2Struct`                            |
+| GoAI -f '{request}'                      | Include the full command catalog in the prompt (better accuracy) |
+| GoAI                                     | Open an interactive prompt                                       |
 
 The natural language request must be wrapped in single quotes (`'`).
 
@@ -689,11 +693,11 @@ Requires `ai = { enable = true }` in your go.nvim setup.
 All AI commands (`GoAI`, `GoAIChat`, `GoCodeReview -m`) support context macros in prompts.
 Macros are expanded before the request is sent to the LLM.
 
-| Macro       | Description                                                              |
-| ----------- | ------------------------------------------------------------------------ |
-| `/buffer`   | Select a loaded buffer (default: current buffer). Injects buffer contents. |
+| Macro       | Description                                                                         |
+| ----------- | ----------------------------------------------------------------------------------- |
+| `/buffer`   | Select a loaded buffer (default: current buffer). Injects buffer contents.          |
 | `/file`     | Select a Go file from the workspace (default: current file). Injects file contents. |
-| `/function` | Injects the enclosing function at cursor (detected via treesitter).      |
+| `/function` | Injects the enclosing function at cursor (detected via treesitter).                 |
 
 Examples:
 
@@ -721,7 +725,7 @@ actionable findings (errors, warnings, suggestions).
 | GoCodeReview -b         | Review with a brief/compact prompt (saves tokens)                   |
 | GoCodeReview -d -b      | Diff review with brief prompt                                       |
 | GoCodeReview -m {text}  | Provide change description for context-aware review                 |
-| GoCodeReview -m         | Open interactive editor for multi-line change description            |
+| GoCodeReview -m         | Open interactive editor for multi-line change description           |
 
 The `-m` flag lets you describe what the changes are about so the reviewer can give more targeted feedback:
 
@@ -744,13 +748,13 @@ Requires `ai = { enable = true }` in your go.nvim setup. Results are loaded into
 - **Cursor in function**: the enclosing function text and LSP references/callers are included
 - **No context**: opens an interactive prompt
 
-| Command                                    | Description                                      |
-| ------------------------------------------ | ------------------------------------------------ |
-| :'<,'>GoAIChat 'explain this code'         | Explain visually selected code                   |
-| GoAIChat 'check for bugs'                  | Check enclosing function for bugs                |
-| GoAIChat 'refactor this code'              | Suggest refactoring for the function under cursor |
-| GoAIChat                                   | Open interactive prompt                          |
-| GoAIChat 'create a commit summary'         | Summarize git diff as a commit message           |
+| Command                            | Description                                       |
+| ---------------------------------- | ------------------------------------------------- |
+| :'<,'>GoAIChat 'explain this code' | Explain visually selected code                    |
+| GoAIChat 'check for bugs'          | Check enclosing function for bugs                 |
+| GoAIChat 'refactor this code'      | Suggest refactoring for the function under cursor |
+| GoAIChat                           | Open interactive prompt                           |
+| GoAIChat 'create a commit summary' | Summarize git diff as a commit message            |
 
 Tab completion provides common prompts: `explain this code`, `refactor this code`,
 `check for bugs`, `check concurrency safety`, `suggest improvements`, etc.

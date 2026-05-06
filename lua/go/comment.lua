@@ -10,31 +10,31 @@ local gen_comment = function()
   local comments = nil
 
   local ns = require('go.ts.go').get_package_node_at_pos()
-  if ns ~= nil and ns ~= {} then
+  if ns ~= nil and next(ns) ~= nil then
     -- ulog("parnode" .. vim.inspect(ns))
     comments = '// Package ' .. ns.name .. ' provides ' .. ns.name
     return comments, ns
   end
   ns = require('go.ts.go').get_func_method_node_at_pos()
-  if ns ~= nil and ns ~= {} then
+  if ns ~= nil and next(ns) ~= nil then
     -- ulog("parnode" .. vim.inspect(ns))
     comments = '// ' .. ns.name .. ' ' .. ns.type
     return comments, ns
   end
   ns = require('go.ts.go').get_struct_node_at_pos()
-  if ns ~= nil and ns ~= {} then
+  if ns ~= nil and next(ns) ~= nil then
     comments = '// ' .. ns.name .. ' ' .. ns.type
     return comments, ns
   end
   ns = require('go.ts.go').get_interface_node_at_pos()
-  if ns ~= nil and ns ~= {} then
+  if ns ~= nil and next(ns) ~= nil then
     -- ulog("parnode" .. vim.inspect(ns))
     comments = '// ' .. ns.name .. ' ' .. ns.type
     return comments, ns
   end
 
   ns = require('go.ts.go').get_type_node_at_pos()
-  if ns ~= nil and ns ~= {} then
+  if ns ~= nil and next(ns) ~= nil then
     -- ulog("parnode" .. vim.inspect(ns))
     comments = '// ' .. ns.name .. ' ' .. ns.type
     return comments, ns

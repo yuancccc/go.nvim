@@ -288,6 +288,9 @@ CODE GENERATION ~
 <
         Tab completion for interface names.
 
+:GoFix {args}                                                      *:GoFix*
+        Run `go fix`
+
 :GoEnum {args}                                                    *:GoEnum*
         Generate enum helpers for the type under cursor.
 

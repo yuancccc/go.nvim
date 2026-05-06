@@ -6,12 +6,6 @@ local vfn = vim.fn
 
 local install = require('go.install').install
 
-local goimport_args = _GO_NVIM_CFG.goimport_args
-  or {
-    '--max-len=' .. tostring(max_len),
-    '--base-formatter=goimports',
-  }
-
 local M = {}
 
 M.lsp_format = function()
@@ -21,11 +15,10 @@ M.lsp_format = function()
     bufnr = vim.api.nvim_get_current_buf(),
     name = 'gopls',
   })
-  if not _GO_NVIM_CFG.lsp_fmt_async then
-    if vfn.getbufinfo('%')[1].changed == 1 then
-      vim.cmd('noautocmd write')
-    end
+  if _GO_NVIM_CFG.lsp_fmt_async == true or vfn.getbufinfo('%')[1].changed == 0 then
+    return
   end
+  vim.cmd('noautocmd write')
   -- otherwise use the format handler
 end
 
@@ -99,8 +92,7 @@ end
 
 M.gofmt = function(...)
   local gofmt = _GO_NVIM_CFG.gofmt or 'gopls'
-  local gofmt_args = _GO_NVIM_CFG.gofmt_args
-    or {}
+  local gofmt_args = _GO_NVIM_CFG.gofmt_args or {}
   local long_opts = {
     all = 'a',
   }
@@ -138,7 +130,7 @@ M.gofmt = function(...)
 end
 
 M.org_imports = function()
-  require('go.lsp').codeaction({cmd ='', only = 'source.organizeImports', hdlr = M.gofmt})
+  require('go.lsp').codeaction({ cmd = '', only = 'source.organizeImports', hdlr = M.gofmt })
 end
 
 M.goimports = function(...)

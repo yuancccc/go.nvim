@@ -30,6 +30,7 @@ The plugin covers most features required for a gopher.
 - [`GoJson2Struct`](doc/usage.md#jsonyaml-to-go-struct) — convert JSON/YAML to Go structs
 - [`GoMockGen`](doc/usage.md#go-mock) — generate mocks with mockgen
 - [`GoNew`](doc/usage.md#gonew) — create files/projects from templates (including `gonew`)
+- GoFix - Run `go fix`
 - Struct tag management with [`gomodifytags`](doc/usage.md#modifytags)
 
 **Formatting & Linting**
