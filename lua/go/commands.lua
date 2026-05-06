@@ -541,6 +541,11 @@ return {
     create_cmd('GoListImports', function(_)
       local lines = require('go.gopls').list_imports().PackageImports or {}
 
+      if #lines == 0 then
+        vim.notify('GoListImports: no imports found', vim.log.levels.INFO)
+        return
+      end
+
       local close_events = { 'CursorMoved', 'CursorMovedI', 'BufHidden', 'InsertCharPre' }
       local config = {
         close_events = close_events,
