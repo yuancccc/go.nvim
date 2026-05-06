@@ -40,7 +40,7 @@ function M.toggle()
     enabled = false
     local gopls = require('go.lsp').client()
     if gopls then
-      vim.lsp.codelens.clear(gopls.id, 0)
+      vim.lsp.codelens.enable(false, { bufnr = 0 })
     end
   else
     log('toggle codelens enable', enabled)
@@ -56,10 +56,11 @@ function M.refresh()
     return
   end
   if _GO_NVIM_CFG.lsp_codelens == true then
-    vim.lsp.codelens.refresh({ bufnr = 0 })
+    vim.lsp.codelens.enable(false, { bufnr = 0 })
+    vim.lsp.codelens.enable(true, { bufnr = 0 })
   else
     log('refresh codelens')
-    vim.lsp.codelens.clear(gopls.id, 0)
+    vim.lsp.codelens.enable(false, { bufnr = 0 })
   end
 end
 
