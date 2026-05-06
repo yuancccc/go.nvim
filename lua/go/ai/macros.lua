@@ -192,9 +192,7 @@ end
 --- @param prompt string
 --- @return boolean
 function M.has_macros(prompt)
-  return prompt:find('/buffer', 1, true) ~= nil
-    or prompt:find('/file', 1, true) ~= nil
-    or prompt:find('/function', 1, true) ~= nil
+  return prompt:find('/buffer', 1, true) ~= nil or prompt:find('/file', 1, true) ~= nil or prompt:find('/function', 1, true) ~= nil
 end
 
 return M

@@ -100,12 +100,12 @@ local function binary_check()
       if not parser_path then
         warn(
           'treesitter parser '
-          .. parser
-          .. req
-          .. ' but it is not found, please Run `:TSInstallSync '
-          .. parser
-          .. '`'
-          .. ' to install or some features may not work'
+            .. parser
+            .. req
+            .. ' but it is not found, please Run `:TSInstallSync '
+            .. parser
+            .. '`'
+            .. ' to install or some features may not work'
         )
         no_err = false
       else

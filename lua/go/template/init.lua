@@ -199,11 +199,7 @@ local function template_eval(template, env, opts)
       if linen ~= -1 then
         line = chunk[linen]
       end
-      local err1 = 'Template evaluation failed around this line:\n\t>>> '
-        .. line
-        .. ' (line #'
-        .. linen
-        .. ')'
+      local err1 = 'Template evaluation failed around this line:\n\t>>> ' .. line .. ' (line #' .. linen .. ')'
       local err2 = 'Interpreter error: ' .. (tostring(ret.error) or '')
       errMessage = err1 .. '\n' .. err2
     end

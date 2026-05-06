@@ -71,10 +71,7 @@ local function build_enriched_prompt(code_text, semantic_context, opts)
   end
   table.insert(parts, '\n## Semantic Context for Changed Symbols\n' .. semantic_context)
   if not opts or not opts.brief then
-    table.insert(
-      parts,
-      '\nUse the semantic context to assess caller impact, interface contracts, and downstream breakage.'
-    )
+    table.insert(parts, '\nUse the semantic context to assess caller impact, interface contracts, and downstream breakage.')
     table.insert(parts, '\nReminder: Output ONLY the JSON array. No markdown, no summary, no prose.')
   end
   return table.concat(parts, '\n')
@@ -162,15 +159,12 @@ function M.review(opts)
 
   -- If -m message contains macros, expand them first
   if opts.message and opts.message ~= '' and ai.expand_macros then
-    local has_macro = opts.message:find('/buffer', 1, true)
-      or opts.message:find('/file', 1, true)
-      or opts.message:find('/function', 1, true)
+    local has_macro = opts.message:find('/buffer', 1, true) or opts.message:find('/file', 1, true) or opts.message:find('/function', 1, true)
     ai.expand_macros(opts.message, source_bufnr, function(expanded_msg, ctx_attachments)
       if ctx_attachments and ctx_attachments ~= '' then
         expanded_msg = expanded_msg .. '\n\n' .. ctx_attachments
       end
-      local new_opts =
-        vim.tbl_extend('force', opts, { message = expanded_msg, skip_source = has_macro and true or false })
+      local new_opts = vim.tbl_extend('force', opts, { message = expanded_msg, skip_source = has_macro and true or false })
       do_review(new_opts)
     end)
   else

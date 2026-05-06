@@ -224,38 +224,34 @@ end
 --- @param branch string  Branch name to diff against
 --- @param callback function  Called with (diff_text, err_msg)
 local function get_git_diff_all(branch, callback)
-  vim.system(
-    { 'git', 'diff', '-U5', '--stat', branch .. '...HEAD', '--', '*.go' },
-    { text = true },
-    function(stat_result)
-      vim.schedule(function()
-        -- Get the stat summary
-        local stat = ''
-        if stat_result.code == 0 then
-          stat = vim.trim(stat_result.stdout or '')
-        end
-        -- Now get the actual diff
-        vim.system({ 'git', 'diff', '-U5', branch .. '...HEAD', '--', '*.go' }, { text = true }, function(result)
-          vim.schedule(function()
-            if result.code ~= 0 then
-              callback(nil, 'git diff failed: ' .. (result.stderr or ''):gsub('%s+$', ''))
-              return
-            end
-            local diff = vim.trim(result.stdout or '')
-            if diff == '' then
-              callback(nil, 'no Go file changes against ' .. branch)
-              return
-            end
-            -- Prepend stat summary for context
-            if stat ~= '' then
-              diff = '--- File stats ---\n' .. stat .. '\n\n--- Diff ---\n' .. diff
-            end
-            callback(diff, nil)
-          end)
+  vim.system({ 'git', 'diff', '-U5', '--stat', branch .. '...HEAD', '--', '*.go' }, { text = true }, function(stat_result)
+    vim.schedule(function()
+      -- Get the stat summary
+      local stat = ''
+      if stat_result.code == 0 then
+        stat = vim.trim(stat_result.stdout or '')
+      end
+      -- Now get the actual diff
+      vim.system({ 'git', 'diff', '-U5', branch .. '...HEAD', '--', '*.go' }, { text = true }, function(result)
+        vim.schedule(function()
+          if result.code ~= 0 then
+            callback(nil, 'git diff failed: ' .. (result.stderr or ''):gsub('%s+$', ''))
+            return
+          end
+          local diff = vim.trim(result.stdout or '')
+          if diff == '' then
+            callback(nil, 'no Go file changes against ' .. branch)
+            return
+          end
+          -- Prepend stat summary for context
+          if stat ~= '' then
+            diff = '--- File stats ---\n' .. stat .. '\n\n--- Diff ---\n' .. diff
+          end
+          callback(diff, nil)
         end)
       end)
-    end
-  )
+    end)
+  end)
 end
 
 -- ─── Response parsing ────────────────────────────────────────────────────────
@@ -449,10 +445,7 @@ end
 function M.run(opts)
   local cfg = _GO_NVIM_CFG.ai or {}
   if not cfg.enable then
-    vim.notify(
-      'go.nvim [AI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoCodeReview',
-      vim.log.levels.WARN
-    )
+    vim.notify('go.nvim [AI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoCodeReview', vim.log.levels.WARN)
     return
   end
 

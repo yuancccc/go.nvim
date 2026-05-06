@@ -12,45 +12,37 @@ vim.fn.mkdir(install_dir .. '/queries', 'p')
 -- Manual compilation approach
 local function compile_parser()
   local build_dir = '/tmp/tree-sitter-go'
-  
+
   -- Clean up any existing build
   vim.fn.system('rm -rf ' .. build_dir)
-  
+
   -- Clone the tree-sitter-go repository
   print('Cloning tree-sitter-go...')
-  local clone_result = vim.fn.system(string.format(
-    'git clone --depth 1 https://github.com/tree-sitter/tree-sitter-go.git %s 2>&1',
-    build_dir
-  ))
+  local clone_result = vim.fn.system(string.format('git clone --depth 1 https://github.com/tree-sitter/tree-sitter-go.git %s 2>&1', build_dir))
   print(clone_result)
-  
+
   if vim.fn.isdirectory(build_dir .. '/src') ~= 1 then
     print('ERROR: Failed to clone tree-sitter-go')
     return false
   end
-  
+
   -- Compile the parser
   print('Compiling parser...')
   local parser_c = build_dir .. '/src/parser.c'
   local scanner_c = build_dir .. '/src/scanner.c'
   local output_so = install_dir .. '/parser/go.so'
-  
+
   local sources = parser_c
   if vim.fn.filereadable(scanner_c) == 1 then
     sources = sources .. ' ' .. scanner_c
   end
-  
-  local compile_cmd = string.format(
-    'cc -o "%s" -I"%s/src" %s -shared -Os -fPIC 2>&1',
-    output_so,
-    build_dir,
-    sources
-  )
-  
+
+  local compile_cmd = string.format('cc -o "%s" -I"%s/src" %s -shared -Os -fPIC 2>&1', output_so, build_dir, sources)
+
   print('Compile command: ' .. compile_cmd)
   local compile_result = vim.fn.system(compile_cmd)
   print('Compile output: ' .. compile_result)
-  
+
   -- Check if compilation succeeded
   if vim.fn.filereadable(output_so) == 1 then
     print('✓ Successfully compiled go.so')
@@ -69,10 +61,12 @@ local ok, _ = pcall(function()
   require('nvim-treesitter').setup({
     install_dir = install_dir,
   })
-  
+
   local install = require('nvim-treesitter.install')
   install.update('go')
-  vim.wait(5000, function() return false end)
+  vim.wait(5000, function()
+    return false
+  end)
 end)
 
 -- Check if nvim-treesitter installation worked
@@ -108,18 +102,18 @@ if not queries_copied then
 end
 
 -- Verify installation
-print("\nVerifying parser installation...")
+print('\nVerifying parser installation...')
 local parser_dir = install_dir .. '/parser'
 local queries_dir = install_dir .. '/queries/go'
 
 if vim.fn.isdirectory(parser_dir) == 1 then
   local files = vim.fn.readdir(parser_dir)
   print('Parser files: ' .. vim.inspect(files))
-  
+
   local go_so_exists = vim.fn.filereadable(parser_dir .. '/go.so') == 1
   print('go.so exists: ' .. tostring(go_so_exists))
   print('go.so size: ' .. vim.fn.getfsize(parser_dir .. '/go.so') .. ' bytes')
-  
+
   if not go_so_exists then
     print('ERROR: go.so not found!')
     os.exit(1)

@@ -1,7 +1,7 @@
 local M = {}
 function M.list(args)
-  local cmd = {'go', 'list', '-json'}
-  vim.list_extend(cmd, args or {'.'})
+  local cmd = { 'go', 'list', '-json' }
+  vim.list_extend(cmd, args or { '.' })
 
   local out = vim.fn.systemlist(table.concat(cmd, ' '))
   if vim.v.shell_error ~= 0 then
@@ -17,9 +17,9 @@ function M.list(args)
 end
 
 function M.list_pkgs(path)
-  local cmd = {'go', 'list'}
+  local cmd = { 'go', 'list' }
 
-  vim.list_extend(cmd, args or {'.'})
+  vim.list_extend(cmd, args or { '.' })
   out = vim.fn.systemlist(table.concat(cmd, ' '))
   if vim.v.shell_error ~= 0 then
     require('go.utils').warn('go list failed', vim.inspect(out))

@@ -1,12 +1,12 @@
 local eq = assert.are.same
-local cur_dir = vim.fn.expand("%:p:h")
+local cur_dir = vim.fn.expand('%:p:h')
 
-local busted = require("plenary/busted")
-describe("should run gorename", function()
+local busted = require('plenary/busted')
+describe('should run gorename', function()
   -- vim.fn.readfile('minimal.vim')
   -- vim.fn.writefile(vim.fn.readfile('fixtures/fmt/hello.go'), name)
-  require("plenary.reload").reload_module("go.nvim")
-  it("should run rename", function()
+  require('plenary.reload').reload_module('go.nvim')
+  it('should run rename', function()
     eq(1, 1)
     -- use lsp to rename
     -- local name = vim.fn.tempname() .. ".go"

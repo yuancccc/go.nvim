@@ -6,8 +6,7 @@ local provider = require('go.ai.provider')
 local macros = require('go.ai.macros')
 local session = require('go.ai.session')
 
-local edit_system_prompt =
-  [[You are an expert Go developer. The user will provide Go code and an instruction to modify it.
+local edit_system_prompt = [[You are an expert Go developer. The user will provide Go code and an instruction to modify it.
 
 Rules:
 1. Return ONLY the modified Go code in a single fenced code block (```go ... ```).

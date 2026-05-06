@@ -121,9 +121,7 @@ local extend_config = function(gopls, opts)
       gopls[key] = vim.tbl_deep_extend('force', gopls[key], value)
     else
       if type(gopls[key]) ~= type(value) and key ~= 'handlers' then
-        vim.notify(
-          'gopls setup for ' .. key .. ' type:' .. type(gopls[key]) .. ' is not ' .. type(value) .. vim.inspect(value)
-        )
+        vim.notify('gopls setup for ' .. key .. ' type:' .. type(gopls[key]) .. ' is not ' .. type(value) .. vim.inspect(value))
       end
       gopls[key] = value
     end
@@ -333,11 +331,7 @@ M.codeaction = function(args)
       local act_cmd = res.data and res.data.command or ''
       local fix = res.data and res.data.arguments and res.data.arguments[1] and res.data.arguments[1].Fix or ''
       log(fix, act_cmd, filters)
-      if
-        res.edit
-        or (act_cmd == gopls_cmd and #filters == 0)
-        or (act_cmd == gopls_cmd and vim.tbl_contains(filters, fix))
-      then
+      if res.edit or (act_cmd == gopls_cmd and #filters == 0) or (act_cmd == gopls_cmd and vim.tbl_contains(filters, fix)) then
         table.insert(actions, res)
       end
     end
@@ -573,26 +567,20 @@ function M.watchFileChanged(fname, params)
   params = params or vim.lsp.util.make_workspace_params()
   fname = fname or vim.api.nvim_buf_get_name(0)
   -- \ 'method': 'workspace/didChangeWatchedFiles',
-  params.changes = params.changes
-    or {
-      { uri = params.uri or vim.uri_from_fname(fname), type = params.type or change_type.Changed },
-    }
-  vim.lsp.buf_request(
-    vim.api.nvim_get_current_buf(),
-    'workspace/didChangeWatchedFiles',
-    params,
-    function(err, result, ctx)
-      vim.defer_fn(function()
-        -- log(err, result, ctx)
-        if err then
-          -- the request was send to all clients and some may not support
-          log('failed to workspace reloaded:' .. vim.inspect(err) .. vim.inspect(ctx) .. vim.inspect(result))
-        else
-          vim.notify('workspace reloaded')
-        end
-      end, 200)
-    end
-  )
+  params.changes = params.changes or {
+    { uri = params.uri or vim.uri_from_fname(fname), type = params.type or change_type.Changed },
+  }
+  vim.lsp.buf_request(vim.api.nvim_get_current_buf(), 'workspace/didChangeWatchedFiles', params, function(err, result, ctx)
+    vim.defer_fn(function()
+      -- log(err, result, ctx)
+      if err then
+        -- the request was send to all clients and some may not support
+        log('failed to workspace reloaded:' .. vim.inspect(err) .. vim.inspect(ctx) .. vim.inspect(result))
+      else
+        vim.notify('workspace reloaded')
+      end
+    end, 200)
+  end)
 end
 
 return M

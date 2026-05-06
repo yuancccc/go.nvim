@@ -56,7 +56,8 @@ local has_nvim0_11 = vim.fn.has('nvim-0.11') == 1
 	Views                   Command = "gopls.views"
 	Vulncheck               Command = "gopls.vulncheck"
 	WorkspaceStats          Command = "gopls.workspace_stats"
-]] --
+]]
+--
 
 local gopls_cmds = {
   'gopls.add_dependency',

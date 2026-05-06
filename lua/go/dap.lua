@@ -23,17 +23,17 @@ local long_opts = {
 local opts = 'tcraRsnpfsbhT:'
 local function help()
   return 'Usage: GoDebug [OPTION]\n'
-      .. 'Options:\n'
-      .. '  -c, --compile         compile\n'
-      .. '  -r, --run             run\n'
-      .. '  -t, --test            run tests\n'
-      .. '  -R, --restart         restart\n'
-      .. '  -s, --stop            stop\n'
-      .. '  -h, --help            display this help and exit\n'
-      .. '  -n, --nearest         debug nearest file\n'
-      .. '  -p, --package         debug package\n'
-      .. '  -f, --file            display file\n'
-      .. '  -b, --breakpoint      set breakpoint'
+    .. 'Options:\n'
+    .. '  -c, --compile         compile\n'
+    .. '  -r, --run             run\n'
+    .. '  -t, --test            run tests\n'
+    .. '  -R, --restart         restart\n'
+    .. '  -s, --stop            stop\n'
+    .. '  -h, --help            display this help and exit\n'
+    .. '  -n, --nearest         debug nearest file\n'
+    .. '  -p, --package         debug package\n'
+    .. '  -f, --file            display file\n'
+    .. '  -b, --breakpoint      set breakpoint'
 end
 
 -- not sure if anyone still use telescope for debug
@@ -159,19 +159,13 @@ local unmap = function()
         end
 
         trace(v)
-        vim.keymap.set(
-          mode,
-          v.lhs,
-          v.rhs or v.callback,
-          { noremap = nr, silent = sl, expr = exp, desc = desc }
-        )
+        vim.keymap.set(mode, v.lhs, v.rhs or v.callback, { noremap = nr, silent = sl, expr = exp, desc = desc })
         -- vim.api.nvim_set_keymap('n', v.lhs, v.rhs, {noremap=nr, silent=sl, expr=exp})
       end
     end
   end
   keymaps_backup = {}
 end
-
 
 local function get_test_build_tags()
   local get_build_tags = require('go.gotest').get_build_tags
@@ -187,11 +181,7 @@ local M = {}
 
 function M.debug_keys()
   if next(keys) == nil then
-    vim.notify(
-      "go.nvim: No debug keymaps activate yet.\n" ..
-      "Start a debug session (:GoDebug) first.",
-      vim.log.levels.WARN
-    )
+    vim.notify('go.nvim: No debug keymaps activate yet.\n' .. 'Start a debug session (:GoDebug) first.', vim.log.levels.WARN)
     return
   end
 
@@ -576,7 +566,7 @@ M.run = function(...)
     if tblcase_ns and tblcase_ns.name then
       vim.notify('running test case: ' .. tblcase_ns.name)
       tbl_name = tblcase_ns.name
-      tbl_name = tbl_name:gsub('"', '')  -- remove "
+      tbl_name = tbl_name:gsub('"', '') -- remove "
       tbl_name = tbl_name:gsub(' ', '_') -- remove space
       tbl_name = tbl_name:gsub('/', '//')
       tbl_name = tbl_name:gsub('%(', '\\(')

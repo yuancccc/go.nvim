@@ -244,10 +244,7 @@ function go.setup(cfg)
       for k, _ in pairs(cfg.null_ls.golangci_lint) do
         -- the key has to be one of 'method', 'severity'
         if not vim.tbl_contains({ 'method', 'severity' }, k) then
-          vim.notify(
-            'go.nvim config: null_ls.golangci_lint.' .. k .. ' deprecated, use golangci_lint.' .. k,
-            vim.log.levels.WARN
-          )
+          vim.notify('go.nvim config: null_ls.golangci_lint.' .. k .. ' deprecated, use golangci_lint.' .. k, vim.log.levels.WARN)
         end
       end
     end

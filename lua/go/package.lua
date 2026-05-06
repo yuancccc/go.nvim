@@ -224,7 +224,7 @@ local show_pkg_panel = function(result, pkg, rerender)
     for i = 1, #result.Symbols do
       item = result.Symbols[i]
       -- items[i].node_text = items[i].detail
-      item.uri =files[(item.file or 0) + 1]
+      item.uri = files[(item.file or 0) + 1]
       item.filename = vim.uri_to_fname(item.uri)
       item.kind = kinds(item.kind)
       item.text = item.kind .. item.name
@@ -263,19 +263,17 @@ local show_pkg_panel = function(result, pkg, rerender)
       end,
       -- override format function
       -- format = function(item)
-        --   return item.indent ..  '>' .. item.node_text
-        -- end
-      })
-      log(p)
-      p:open(true)
+      --   return item.indent ..  '>' .. item.node_text
+      -- end
+    })
+    log(p)
+    p:open(true)
   end)
 end
 
 local gopls_pkg_symbols = function()
   local gopls = require('go.gopls')
-
 end
-
 
 local pkg_info = {}
 -- get package info
@@ -323,13 +321,7 @@ local gen_pkg_info = function(cmd, pkg, arg, rerender)
     on_stdout = handle_data_out,
     on_exit = function(e, data, _)
       if data ~= 0 then
-        local info = string.format(
-          'no packege (%s) \n errcode %s \n cmd: %s \n code %s',
-          vim.inspect(pkg),
-          e,
-          vim.inspect(cmd),
-          tostring(data)
-        )
+        local info = string.format('no packege (%s) \n errcode %s \n cmd: %s \n code %s', vim.inspect(pkg), e, vim.inspect(cmd), tostring(data))
         vim.notify(info)
         log(cmd, info, data)
         return
@@ -375,8 +367,6 @@ local function symbols_to_items(result)
   -- log(locations[1])
   return locations
 end
-
-
 
 outline = function(...)
   -- log(debug.traceback())

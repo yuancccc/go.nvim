@@ -1,7 +1,8 @@
-set rtp +=.
-set rtp +=../../plugins/plenary.nvim/
-set rtp +=../../plugins/nvim-treesitter
-set rtp +=../../plugins/nvim-lspconfig/
+let s:plugin_dir = expand('~/.local/share/nvim/site/pack/vendor/start')
+set rtp+=.
+execute 'set rtp^=' . s:plugin_dir . '/plenary.nvim'
+execute 'set rtp^=' . s:plugin_dir . '/nvim-treesitter'
+execute 'set rtp^=' . s:plugin_dir . '/nvim-lspconfig'
 
 runtime! plugin/plenary.vim
 runtime! plugin/nvim-treesitter.vim

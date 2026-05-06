@@ -195,10 +195,7 @@ return {
     })
 
     local gobin = _GO_NVIM_CFG.go
-    local cmd = string.format(
-      [[command! -nargs=* GoGenerate :setl makeprg=%s\ generate | lua require'go.asyncmake'.make(<f-args>)]],
-      gobin
-    )
+    local cmd = string.format([[command! -nargs=* GoGenerate :setl makeprg=%s\ generate | lua require'go.asyncmake'.make(<f-args>)]], gobin)
     vim.cmd(cmd)
 
     cmd = string.format(
@@ -989,8 +986,7 @@ return {
         local cmd_filter = fargs[2] -- optional: chat, edit, review, explain
         local entry = session.last_response(cmd_filter)
         if not entry then
-          local msg = cmd_filter and string.format('[GoAISession]: no %s response found', cmd_filter)
-            or '[GoAISession]: no response found in session'
+          local msg = cmd_filter and string.format('[GoAISession]: no %s response found', cmd_filter) or '[GoAISession]: no response found in session'
           vim.notify(msg, vim.log.levels.WARN)
           return
         end
@@ -998,10 +994,7 @@ return {
         local ai_ui = require('go.ai.ui')
         ai_ui.show_markdown_float(entry.content, title)
       else
-        vim.notify(
-          '[GoAISession]: unknown subcommand: ' .. subcmd .. '. Use: info, show [cmd], delete, trim [days], list',
-          vim.log.levels.WARN
-        )
+        vim.notify('[GoAISession]: unknown subcommand: ' .. subcmd .. '. Use: info, show [cmd], delete, trim [days], list', vim.log.levels.WARN)
       end
     end, {
       nargs = '*',

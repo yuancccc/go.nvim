@@ -8,10 +8,7 @@ describe('should run fillstruct', function()
   it('should run fillstruct', function()
     --
     vim.o.ft = 'go'
-    local expected = vim.fn.join(
-      vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/fill/fill_struct_golden.txt'),
-      '\n'
-    )
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/fill/fill_struct_golden.txt'), '\n')
 
     local path = cur_dir .. '/lua/tests/fixtures/' -- %:p:h ? %:p
     vim.cmd('cd ' .. path)

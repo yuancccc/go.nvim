@@ -53,7 +53,7 @@ M.efm = function()
 
   efm = efm .. ',%A%f:%l:%c: %m'
   efm = efm .. ',%A%f:%l: %m'
-  efm = efm .. ',%f:%l +0x%[0-9A-Fa-f]%\\+'                    -- pannic with adress
+  efm = efm .. ',%f:%l +0x%[0-9A-Fa-f]%\\+' -- pannic with adress
   efm = efm .. ',%-G%\\t%\\f%\\+:%\\d%\\+ +0x%[0-9A-Fa-f]%\\+' -- test failure, address invalid inside
   -- multi-line
   efm = efm .. ',%+G%\\t%m'
@@ -512,10 +512,7 @@ M.test_func = function(...)
   local bufnr = get_test_filebufnr()
   local p = vim.treesitter.get_parser(bufnr, 'go')
   if not p then
-    vim.notify(
-      'go treesitter parser not found for file ' .. vim.fn.bufname() .. ' please Run `:TSInstallSync go` ',
-      vim.log.levels.WARN
-    )
+    vim.notify('go treesitter parser not found for file ' .. vim.fn.bufname() .. ' please Run `:TSInstallSync go` ', vim.log.levels.WARN)
   end
   local ns = M.get_test_func_name()
   if empty(ns) then

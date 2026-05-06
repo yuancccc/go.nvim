@@ -63,7 +63,7 @@ function M.autocomplete(a, l)
     else
       M.subcmds = out
       M.toolsubcmds_need_rerun = false
-      end
+    end
   end
   -- return string of subcommands separated by \n
   utils.log(M.subcmds)

@@ -308,13 +308,7 @@ local function find_symbol_source(query, callback)
           end
           table.insert(
             parts,
-            string.format(
-              '--- %s (from %s:%d) ---\n%s',
-              label,
-              vim.fn.fnamemodify(match.filepath, ':~:.'),
-              match.line + 1,
-              table.concat(snippet, '\n')
-            )
+            string.format('--- %s (from %s:%d) ---\n%s', label, vim.fn.fnamemodify(match.filepath, ':~:.'), match.line + 1, table.concat(snippet, '\n'))
           )
         end
       end
@@ -347,10 +341,7 @@ m.run_ai = function(opts)
 
   local cfg = _GO_NVIM_CFG.ai or {}
   if not cfg.enable then
-    vim.notify(
-      'go.nvim [DocAI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoDocAI',
-      vim.log.levels.WARN
-    )
+    vim.notify('go.nvim [DocAI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoDocAI', vim.log.levels.WARN)
     return
   end
 

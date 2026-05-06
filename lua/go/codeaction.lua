@@ -15,7 +15,7 @@ local function range_mark(t)
   local start_lnum, start_col = unpack(api.nvim_buf_get_mark(0, '<'))
   local end_lnum, end_col = unpack(api.nvim_buf_get_mark(0, '>'))
   if end_col == 2 ^ 31 - 1 then
-    end_col = #vfn.getline(end_lnum) - 1   -- TODO: check nerdfonts, emoji etc?
+    end_col = #vfn.getline(end_lnum) - 1 -- TODO: check nerdfonts, emoji etc?
   end
   -- reverse select
   if end_lnum < start_lnum or (start_lnum == end_lnum and start_col < end_col) then

@@ -1,9 +1,9 @@
-local utils = require("go.utils")
+local utils = require('go.utils')
 local vfn = vim.fn
 
-local iferr = "iferr"
+local iferr = 'iferr'
 local run = function()
-  require("go.install").install(iferr)
+  require('go.install').install(iferr)
 
   local byte_offset = vfn.wordcount().cursor_bytes
 
@@ -16,7 +16,7 @@ local run = function()
     return
   end
   if vim.v.shell_error ~= 0 then
-    utils.warn("iferr failed" .. vim.inspect(data))
+    utils.warn('iferr failed' .. vim.inspect(data))
     return
   end
 
@@ -25,9 +25,8 @@ local run = function()
 
   vim.cmd('silent normal! j=2j')
   vfn.setpos('.', pos)
-  local vertical_shift =  tostring(_GO_NVIM_CFG.iferr_vertical_shift) .. 'j'
+  local vertical_shift = tostring(_GO_NVIM_CFG.iferr_vertical_shift) .. 'j'
   vim.cmd('silent normal! ' .. vertical_shift)
   --
-
 end
-return {run = run}
+return { run = run }

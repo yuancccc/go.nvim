@@ -14,8 +14,7 @@ describe('should run gopls related functions', function()
     vim.cmd(cmd)
     require('go').setup({ goimports = 'gopls', lsp_cfg = true })
     local path = './fmt/goimports2.go' -- %:p:h ? %:p
-    local expected =
-      vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/fmt/goimports2_golden.go'), '\n')
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/fmt/goimports2_golden.go'), '\n')
 
     vim.cmd('%bdelete!')
     vim.cmd('cd ' .. godir)

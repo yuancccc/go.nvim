@@ -109,84 +109,78 @@ local run = function(cmd, opts, uvopts)
   end
 
   output_stderr = ''
-  handle, _ = uv.spawn(
-    cmd,
-    { stdio = { stdin, stdout, stderr }, cwd = uvopts.cwd, args = job_options.args },
-    function(code, signal) -- on exit()
-      stdin:close()
+  handle, _ = uv.spawn(cmd, { stdio = { stdin, stdout, stderr }, cwd = uvopts.cwd, args = job_options.args }, function(code, signal) -- on exit()
+    stdin:close()
 
-      stdout:read_stop()
-      stdout:close()
+    stdout:read_stop()
+    stdout:close()
 
-      stderr:read_stop()
-      stderr:close()
+    stderr:read_stop()
+    stderr:close()
 
-      handle:close()
-      log('spawn finished', code, signal)
-      sprite.on_close()
+    handle:close()
+    log('spawn finished', code, signal)
+    sprite.on_close()
 
-      if output_stderr ~= '' then
-        log('stderr', output_stderr)
-        vim.schedule(function()
-          vim.notify(output_stderr)
-        end)
-      end
-      if code ~= 0 then
-        log('failed to run', code, output_buf, output_stderr)
-        vim.schedule(function()
-          util.info(
-            cmd_str .. ' exit with code: ' .. tostring(code or 0) .. (output_buf or '') .. (output_stderr or '')
-          )
-        end)
-      end
-
-      local combine_output = ''
-      if output_buf ~= '' or output_stderr ~= '' then
-        -- some commands may output to stderr instead of stdout
-        combine_output = (output_buf or '') .. '\n' .. (output_stderr or '')
-        combine_output = util.remove_ansi_escape(combine_output)
-        combine_output = vim.trim(combine_output)
-      end
-      if opts and opts.on_exit then
-        local onexit_output = opts.on_exit(code, signal, combine_output)
-        if not onexit_output then
-          return
-        else
-          combine_output = onexit_output
-        end
-      end
-
-      if code ~= 0 or signal ~= 0 or output_stderr ~= '' then
-        local lines = util.handle_job_data(vim.split(combine_output, '\n'))
-        local locopts = {
-          title = vim.inspect(cmd),
-          lines = lines,
-        }
-        if opts.efm then
-          locopts.efm = opts.efm
-        end
-        log('command finished: ', locopts, lines)
-        if #lines > 0 then
-          vim.schedule(function()
-            vim.fn.setloclist(0, {}, ' ', locopts)
-            util.info('run lopen to see output')
-          end)
-        end
-      end
-
-      combine_output = output_buf .. '\n' .. output_stderr
-      if opts and opts.on_exit then
-        local onexit_output = opts.on_exit(code, signal, combine_output)
-        log('on_exit returned ', onexit_output)
-      end
-
-      if code ~= 0 or signal ~= 0 or output_stderr ~= '' then
-        log('command finished with error code: ', code, signal)
-      end
-
-      _GO_NVIM_CFG.on_exit(code, signal, combine_output)
+    if output_stderr ~= '' then
+      log('stderr', output_stderr)
+      vim.schedule(function()
+        vim.notify(output_stderr)
+      end)
     end
-  )
+    if code ~= 0 then
+      log('failed to run', code, output_buf, output_stderr)
+      vim.schedule(function()
+        util.info(cmd_str .. ' exit with code: ' .. tostring(code or 0) .. (output_buf or '') .. (output_stderr or ''))
+      end)
+    end
+
+    local combine_output = ''
+    if output_buf ~= '' or output_stderr ~= '' then
+      -- some commands may output to stderr instead of stdout
+      combine_output = (output_buf or '') .. '\n' .. (output_stderr or '')
+      combine_output = util.remove_ansi_escape(combine_output)
+      combine_output = vim.trim(combine_output)
+    end
+    if opts and opts.on_exit then
+      local onexit_output = opts.on_exit(code, signal, combine_output)
+      if not onexit_output then
+        return
+      else
+        combine_output = onexit_output
+      end
+    end
+
+    if code ~= 0 or signal ~= 0 or output_stderr ~= '' then
+      local lines = util.handle_job_data(vim.split(combine_output, '\n'))
+      local locopts = {
+        title = vim.inspect(cmd),
+        lines = lines,
+      }
+      if opts.efm then
+        locopts.efm = opts.efm
+      end
+      log('command finished: ', locopts, lines)
+      if #lines > 0 then
+        vim.schedule(function()
+          vim.fn.setloclist(0, {}, ' ', locopts)
+          util.info('run lopen to see output')
+        end)
+      end
+    end
+
+    combine_output = output_buf .. '\n' .. output_stderr
+    if opts and opts.on_exit then
+      local onexit_output = opts.on_exit(code, signal, combine_output)
+      log('on_exit returned ', onexit_output)
+    end
+
+    if code ~= 0 or signal ~= 0 or output_stderr ~= '' then
+      log('command finished with error code: ', code, signal)
+    end
+
+    _GO_NVIM_CFG.on_exit(code, signal, combine_output)
+  end)
   _GO_NVIM_CFG.on_jobstart(cmd)
 
   uv.read_start(stderr, function(err, data)

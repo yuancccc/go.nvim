@@ -39,10 +39,7 @@ end
 function M.run(opts)
   local cfg = _GO_NVIM_CFG.ai or {}
   if not cfg.enable then
-    vim.notify(
-      'go.nvim [AI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoAIChat',
-      vim.log.levels.WARN
-    )
+    vim.notify('go.nvim [AI]: AI is disabled. Set ai = { enable = true } in go.nvim setup to use GoAIChat', vim.log.levels.WARN)
     return
   end
 

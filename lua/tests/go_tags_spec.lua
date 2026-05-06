@@ -1,8 +1,8 @@
 local helpers = {}
-local busted = require("plenary/busted")
+local busted = require('plenary/busted')
 
 local eq = assert.are.same
-local cur_dir = vim.fn.expand("%:p:h")
+local cur_dir = vim.fn.expand('%:p:h')
 -- local status = require("plenary.reload").reload_module("go.nvim")
 -- status = require("plenary.reload").reload_module("nvim-treesitter")
 
@@ -10,164 +10,148 @@ local cur_dir = vim.fn.expand("%:p:h")
 local wait_time = 500
 
 -- local ulog = require('go.utils').log
-describe("should run gotags", function()
+describe('should run gotags', function()
   local cmd
   -- vim.fn.readfile('minimal.vim')
   -- vim.fn.writefile(vim.fn.readfile('fixtures/fmt/hello.go'), name)
   -- status = require("plenary.reload").reload_module("go.nvim")
-  it("should run add json tags", function()
+  it('should run add json tags', function()
     --
-    local name = vim.fn.tempname() .. ".go"
-    local path = cur_dir .. "/lua/tests/fixtures/tags/add_all_input.go" -- %:p:h ? %:p
+    local name = vim.fn.tempname() .. '.go'
+    local path = cur_dir .. '/lua/tests/fixtures/tags/add_all_input.go' -- %:p:h ? %:p
     local lines = vim.fn.readfile(path)
     vim.fn.writefile(lines, name)
-    local expected = vim.fn.join(vim.fn.readfile(cur_dir
-                                                     .. "/lua/tests/fixtures/tags/add_all_golden.go"),
-                                 "\n")
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/tags/add_all_golden.go'), '\n')
     cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
-    local bufn = vim.fn.bufnr("")
+    local bufn = vim.fn.bufnr('')
 
-    vim.fn.setpos(".", {bufn, 8, 4, 0})
+    vim.fn.setpos('.', { bufn, 8, 4, 0 })
 
     local l = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     -- ulog("buf read: " .. vim.inspect(l))
 
-    vim.bo.filetype = "go"
+    vim.bo.filetype = 'go'
 
     -- ulog("exp:" .. vim.inspect(expected))
 
-    local gotags = require("go.tags")
+    local gotags = require('go.tags')
     gotags.add()
     -- enable the channel response
-    vim.wait(wait_time, function()
-    end)
-    local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
+    vim.wait(wait_time, function() end)
+    local fmt = vim.fn.join(vim.fn.readfile(name), '\n')
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    cmd = "bd! " .. name
+    cmd = 'bd! ' .. name
     vim.cmd(cmd)
   end)
-  it("should rm json tags", function()
-    local name = vim.fn.tempname() .. ".go"
+  it('should rm json tags', function()
+    local name = vim.fn.tempname() .. '.go'
     --
-    local path = cur_dir .. "/lua/tests/fixtures/tags/add_all_golden.go" -- %:p:h ? %:p
+    local path = cur_dir .. '/lua/tests/fixtures/tags/add_all_golden.go' -- %:p:h ? %:p
     local lines = vim.fn.readfile(path)
     vim.fn.writefile(lines, name)
-    local expected = vim.fn.join(vim.fn.readfile(cur_dir
-                                                     .. "/lua/tests/fixtures/tags/add_all_input.go"),
-                                 "\n")
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/tags/add_all_input.go'), '\n')
     cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
-    local bufn = vim.fn.bufnr("")
+    local bufn = vim.fn.bufnr('')
 
-    vim.fn.setpos(".", {bufn, 8, 4, 0})
+    vim.fn.setpos('.', { bufn, 8, 4, 0 })
 
     local l = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     -- ulog("buf read: " .. vim.inspect(l))
 
-    vim.bo.filetype = "go"
+    vim.bo.filetype = 'go'
 
     -- ulog("exp:" .. vim.inspect(expected))
 
-    local gotags = require("go.tags")
+    local gotags = require('go.tags')
     gotags.rm('json')
     -- enable the channel response
-    vim.wait(wait_time, function()
-    end)
+    vim.wait(wait_time, function() end)
 
     -- format the code
-    local gofmt = require("go.format")
+    local gofmt = require('go.format')
     gofmt.gofmt()
-    vim.wait(wait_time, function()
-    end)
-    local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
+    vim.wait(wait_time, function() end)
+    local fmt = vim.fn.join(vim.fn.readfile(name), '\n')
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    cmd = "bd! " .. name
+    cmd = 'bd! ' .. name
     vim.cmd(cmd)
   end)
-  it("should run clear json tags by default", function()
-    local name = vim.fn.tempname() .. ".go"
+  it('should run clear json tags by default', function()
+    local name = vim.fn.tempname() .. '.go'
     --
-    local path = cur_dir .. "/lua/tests/fixtures/tags/add_all_golden.go" -- %:p:h ? %:p
+    local path = cur_dir .. '/lua/tests/fixtures/tags/add_all_golden.go' -- %:p:h ? %:p
     local lines = vim.fn.readfile(path)
     vim.fn.writefile(lines, name)
-    local expected = vim.fn.join(vim.fn.readfile(cur_dir
-                                                     .. "/lua/tests/fixtures/tags/add_all_input.go"),
-                                 "\n")
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/tags/add_all_input.go'), '\n')
     cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
-    local bufn = vim.fn.bufnr("")
+    local bufn = vim.fn.bufnr('')
 
-    vim.fn.setpos(".", {bufn, 8, 4, 0})
+    vim.fn.setpos('.', { bufn, 8, 4, 0 })
 
     local l = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     -- ulog("buf read: " .. vim.inspect(l))
 
-    vim.bo.filetype = "go"
+    vim.bo.filetype = 'go'
 
     -- ulog("exp:" .. vim.inspect(expected))
 
-    local gotags = require("go.tags")
+    local gotags = require('go.tags')
     gotags.rm()
     -- enable the channel response
-    vim.wait(wait_time, function()
-    end)
+    vim.wait(wait_time, function() end)
 
-    local gofmt = require("go.format")
+    local gofmt = require('go.format')
     gofmt.gofmt()
-    vim.wait(wait_time, function()
-    end)
+    vim.wait(wait_time, function() end)
 
-    local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
+    local fmt = vim.fn.join(vim.fn.readfile(name), '\n')
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    cmd = "bd! " .. name
+    cmd = 'bd! ' .. name
     vim.cmd(cmd)
   end)
-  it("should clear all tags", function()
-
-    local name = vim.fn.tempname() .. ".go"
+  it('should clear all tags', function()
+    local name = vim.fn.tempname() .. '.go'
     --
-    local path = cur_dir .. "/lua/tests/fixtures/tags/add_all_golden.go" -- %:p:h ? %:p
+    local path = cur_dir .. '/lua/tests/fixtures/tags/add_all_golden.go' -- %:p:h ? %:p
     local lines = vim.fn.readfile(path)
     vim.fn.writefile(lines, name)
-    local expected = vim.fn.join(vim.fn.readfile(cur_dir
-                                                     .. "/lua/tests/fixtures/tags/add_all_input.go"),
-                                 "\n")
+    local expected = vim.fn.join(vim.fn.readfile(cur_dir .. '/lua/tests/fixtures/tags/add_all_input.go'), '\n')
     cmd = " silent exe 'e " .. name .. "'"
     vim.cmd(cmd)
-    local bufn = vim.fn.bufnr("")
+    local bufn = vim.fn.bufnr('')
 
-    vim.fn.setpos(".", {bufn, 8, 4, 0})
+    vim.fn.setpos('.', { bufn, 8, 4, 0 })
 
     local l = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     -- ulog("buf read: " .. vim.inspect(l))
 
-    vim.bo.filetype = "go"
+    vim.bo.filetype = 'go'
 
     -- ulog("exp:" .. vim.inspect(expected))
 
-    local gotags = require("go.tags")
+    local gotags = require('go.tags')
     gotags.rm()
     -- enable the channel response
-    vim.wait(wait_time, function()
-    end)
+    vim.wait(wait_time, function() end)
 
-    local gofmt = require("go.format")
+    local gofmt = require('go.format')
     gofmt.gofmt()
-    vim.wait(wait_time, function()
-    end)
+    vim.wait(wait_time, function() end)
 
-    local fmt = vim.fn.join(vim.fn.readfile(name), "\n")
+    local fmt = vim.fn.join(vim.fn.readfile(name), '\n')
     -- ulog("tagged file: " .. fmt)
     vim.fn.assert_equal(fmt, expected)
     eq(expected, fmt)
-    cmd = "bd! " .. name
+    cmd = 'bd! ' .. name
     vim.cmd(cmd)
   end)
 end)

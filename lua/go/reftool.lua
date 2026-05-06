@@ -87,7 +87,7 @@ const (
 --
 local function gopls_fillstruct()
   log('fill struct with gopls')
-  require('go.lsp').codeaction({cmd =  'apply_fix', only = 'refactor.rewrite', filters = { 'fillstruct' }})
+  require('go.lsp').codeaction({ cmd = 'apply_fix', only = 'refactor.rewrite', filters = { 'fillstruct' } })
 end
 
 function reftool.fillstruct()

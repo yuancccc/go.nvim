@@ -11,7 +11,6 @@ function M.run(args)
     table.insert(args, i, m)
   end
 
-
   local module_current_line = require('go.mod').get_mod()
   -- utils.log(line)
   local cmd = { 'go', 'get' }

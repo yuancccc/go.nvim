@@ -494,10 +494,7 @@ end
 function M.send_copilot(sys_prompt, user_msg, opts, callback)
   local oauth = get_copilot_oauth_token()
   if not oauth then
-    vim.notify(
-      'go.nvim [AI]: Copilot OAuth token not found. Please install copilot.vim or copilot.lua and run :Copilot auth',
-      vim.log.levels.ERROR
-    )
+    vim.notify('go.nvim [AI]: Copilot OAuth token not found. Please install copilot.vim or copilot.lua and run :Copilot auth', vim.log.levels.ERROR)
     return
   end
 
@@ -517,30 +514,24 @@ function M.send_copilot(sys_prompt, user_msg, opts, callback)
         'Editor-Plugin-Version: go.nvim/1.0.0',
         'User-Agent: go.nvim/1.0.0',
       }
-      call_responses_api(
-        'https://api.githubcopilot.com/responses',
-        headers,
-        body,
-        callback,
-        function(_http_code, _detail, _error_code)
-          -- On error, list available chat-capable models to help the user
-          _copilot_models = nil
-          get_copilot_models(token, function(models)
-            if not models then
-              return
+      call_responses_api('https://api.githubcopilot.com/responses', headers, body, callback, function(_http_code, _detail, _error_code)
+        -- On error, list available chat-capable models to help the user
+        _copilot_models = nil
+        get_copilot_models(token, function(models)
+          if not models then
+            return
+          end
+          local names = {}
+          for _, m in ipairs(models) do
+            if m.id and model_supports_chat(m) then
+              table.insert(names, m.id)
             end
-            local names = {}
-            for _, m in ipairs(models) do
-              if m.id and model_supports_chat(m) then
-                table.insert(names, m.id)
-              end
-            end
-            if #names > 0 then
-              vim.notify('go.nvim [AI]: available models: ' .. table.concat(names, ', '), vim.log.levels.INFO)
-            end
-          end)
-        end
-      )
+          end
+          if #names > 0 then
+            vim.notify('go.nvim [AI]: available models: ' .. table.concat(names, ', '), vim.log.levels.INFO)
+          end
+        end)
+      end)
     end)
   end)
 end

@@ -346,8 +346,7 @@ return {
 
     return h.make_builtin({
       name = 'gotest',
-      method = (_GO_NVIM_CFG.null_ls.gotest and _GO_NVIM_CFG.null_ls.gotest.method)
-        or { DIAGNOSTICS_ON_OPEN, DIAGNOSTICS_ON_SAVE },
+      method = (_GO_NVIM_CFG.null_ls.gotest and _GO_NVIM_CFG.null_ls.gotest.method) or { DIAGNOSTICS_ON_OPEN, DIAGNOSTICS_ON_SAVE },
       filetypes = { 'go' },
       runtime_condition = function()
         local f, _, is_test = require('go.alternate').is_test_file()

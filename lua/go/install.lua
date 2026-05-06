@@ -73,10 +73,7 @@ end
 local function go_install_sync(pkg)
   local u = url[pkg]
   if u == nil then
-    vim.notify(
-      'command ' .. pkg .. ' not supported, please update install.lua, or manually install it',
-      vim.log.levels.WARN
-    )
+    vim.notify('command ' .. pkg .. ' not supported, please update install.lua, or manually install it', vim.log.levels.WARN)
     return
   end
 
@@ -89,10 +86,7 @@ local function go_install_sync(pkg)
   if vim.v.shell_error ~= 0 then
     vim.notify('install ' .. pkg .. ' failed: ' .. output, vim.log.levels.ERROR)
   else
-    vim.notify(
-      'install ' .. pkg .. ' installed to ' .. (vim.env['GOBIN'] or vim.fn.system('go env GOBIN')),
-      vim.log.levels.INFO
-    )
+    vim.notify('install ' .. pkg .. ' installed to ' .. (vim.env['GOBIN'] or vim.fn.system('go env GOBIN')), vim.log.levels.INFO)
   end
 end
 
@@ -100,10 +94,7 @@ end
 local function go_install(pkg)
   local u = url[pkg]
   if u == nil then
-    vim.notify(
-      'command ' .. pkg .. ' not supported, please update install.lua, or manually install it',
-      vim.log.levels.WARN
-    )
+    vim.notify('command ' .. pkg .. ' not supported, please update install.lua, or manually install it', vim.log.levels.WARN)
     return
   end
 

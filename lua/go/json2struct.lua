@@ -57,13 +57,7 @@ function M.run(opts)
       log(code, signal, output_buf)
       if code ~= 0 or signal ~= 0 then
         return vim.notify(
-          vim.inspect(cmd)
-            .. '\nfailed:'
-            .. 'error code'
-            .. tostring(code)
-            .. ' '
-            .. tostring(signal)
-            .. vim.inspect(output_buf or ''),
+          vim.inspect(cmd) .. '\nfailed:' .. 'error code' .. tostring(code) .. ' ' .. tostring(signal) .. vim.inspect(output_buf or ''),
           vim.log.levels.WARN
         )
       end
