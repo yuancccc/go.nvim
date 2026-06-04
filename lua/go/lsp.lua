@@ -37,7 +37,15 @@ local on_attach = function(client, bufnr)
   end
 
   if _GO_NVIM_CFG.lsp_codelens then
-    vim.lsp.codelens.enable(true, { bufnr = 0 })
+    if vim.lsp.codelens.enable then
+      vim.lsp.codelens.enable(true, { bufnr = 0 })
+    else
+      -- nvin 0.11 hack
+      vim.lsp.codelens.enable = function(...)
+        vim.lsp.codelens.refresh(...)
+      end
+      vim.lsp.condelens.enable(true, { bufnr = 0 })
+    end
   end
   local keymaps
   if _GO_NVIM_CFG.lsp_keymaps == true then
@@ -285,8 +293,34 @@ M.codeaction = function(args)
     log('apply_action', action, ctx)
     if vim.fn.empty(action.edit) == 0 then
       vim.lsp.util.apply_workspace_edit(action.edit, gopls.offset_encoding)
-    end
-    if action.command then
+      -- Wait a tick to ensure edits are applied before calling handler
+      vim.defer_fn(function()
+        if action.command then
+          local command = type(action.command) == 'table' and action.command or action
+          local fn = gopls.commands[command.command] or vim.lsp.commands[command.command]
+          ctx.client_id = gopls.id
+          if fn then
+            local enriched_ctx = vim.deepcopy(ctx)
+            fn(command, enriched_ctx)
+            hdlr()
+          else
+            gopls:request('workspace/executeCommand', {
+              command = command.command,
+              arguments = command.arguments,
+              workDoneToken = command.workDoneToken,
+            }, function(_err, r)
+              if _err then
+                log('error', _err)
+              end
+              log('workspace/executeCommand', command.command, r)
+              hdlr()
+            end, bufnr)
+          end
+        else
+          hdlr()
+        end
+      end, 50)
+    elseif action.command then
       local command = type(action.command) == 'table' and action.command or action
       local fn = gopls.commands[command.command] or vim.lsp.commands[command.command]
       ctx.client_id = gopls.id

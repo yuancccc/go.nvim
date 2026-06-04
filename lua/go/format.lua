@@ -8,17 +8,23 @@ local install = require('go.install').install
 
 local M = {}
 
-M.lsp_format = function()
+M.lsp_format = function(callback)
   -- vim.lsp.buf.format({
+  local bufnr = vim.api.nvim_get_current_buf()
   vim.lsp.buf.format({
     async = _GO_NVIM_CFG.lsp_fmt_async,
-    bufnr = vim.api.nvim_get_current_buf(),
+    bufnr = bufnr,
     name = 'gopls',
+    callback = function()
+      -- Wait for format to complete before writing
+      if _GO_NVIM_CFG.lsp_fmt_async ~= true and vfn.getbufinfo('%')[1].changed == 1 then
+        vim.cmd('noautocmd write')
+      end
+      if callback then
+        callback()
+      end
+    end,
   })
-  if _GO_NVIM_CFG.lsp_fmt_async == true or vfn.getbufinfo('%')[1].changed == 0 then
-    return
-  end
-  vim.cmd('noautocmd write')
   -- otherwise use the format handler
 end
 
@@ -46,21 +52,15 @@ local run = function(fmtargs, bufnr, cmd)
   table.insert(args, 1, cmd)
   log('fmt cmd:', args)
 
+  local stdout_data = nil
   local j = vfn.jobstart(args, {
     on_stdout = function(_, data, _)
       data = utils.handle_job_data(data)
       if not data then
         return
       end
-      if not utils.check_same(old_lines, data) then
-        vim.notify('updating codes', vim.log.levels.DEBUG)
-        api.nvim_buf_set_lines(0, 0, -1, false, data)
-        vim.cmd('write')
-      else
-        vim.notify('already formatted', vim.log.levels.DEBUG)
-      end
-      -- log("stdout" .. vim.inspect(data))
-      old_lines = nil
+      -- Store stdout data but don't write yet to avoid race condition
+      stdout_data = data
     end,
     on_stderr = function(_, data, _)
       data = utils.handle_job_data(data)
@@ -71,15 +71,28 @@ local run = function(fmtargs, bufnr, cmd)
     on_exit = function(_, data, _) -- id, data, event
       -- log(vim.inspect(data) .. "exit")
       if data ~= 0 then
+        old_lines = nil
+        stdout_data = nil
         return vim.notify(cmd .. ' failed ' .. tostring(data), vim.log.levels.ERROR)
       end
+
+      -- Process stdout data after job completes to avoid race conditions
+      if stdout_data and not utils.check_same(old_lines, stdout_data) then
+        vim.notify('updating codes', vim.log.levels.DEBUG)
+        api.nvim_buf_set_lines(0, 0, -1, false, stdout_data)
+        -- Write synchronously first
+        vim.cmd('noautocmd write')
+      else
+        vim.notify('already formatted', vim.log.levels.DEBUG)
+      end
+
       old_lines = nil
+      stdout_data = nil
+
+      -- For goimports, run additional LSP format after a delay
       vim.defer_fn(function()
         if cmd == 'goimports' then
           return M.lsp_format()
-        end
-        if vfn.getbufinfo('%')[1].changed == 1 then
-          vim.cmd('noautocmd write')
         end
       end, 200)
     end,
