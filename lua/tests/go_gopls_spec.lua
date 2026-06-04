@@ -24,7 +24,9 @@ describe('should run gopls related functions', function()
     _GO_NVIM_CFG.goimports = 'gopls'
     _GO_NVIM_CFG.lsp_codelens = false
     vim.wait(2000, function()
-      return #vim.lsp.get_active_clients() > 0
+      -- Use get_clients for Neovim 0.10+, fallback to get_active_clients
+      local get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
+      return #get_clients() > 0
     end, 100)
     require('go.format').goimports()
     local fmt

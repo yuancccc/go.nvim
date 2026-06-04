@@ -89,9 +89,10 @@ local run = function(fmtargs, bufnr, cmd)
       old_lines = nil
       stdout_data = nil
 
-      -- For goimports, run additional LSP format after a delay
+      -- For goimports binary, run additional LSP format after a delay
+      -- but only if gofmt is set to 'gopls'
       vim.defer_fn(function()
-        if cmd == 'goimports' then
+        if cmd == 'goimports' and _GO_NVIM_CFG.gofmt == 'gopls' then
           return M.lsp_format()
         end
       end, 200)

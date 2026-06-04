@@ -209,8 +209,10 @@ local function reset_tbl(tbl)
 end
 
 function go.setup(cfg)
-  if vim.fn.has('nvim-0.10') == 0 then
-    vim.notify('go.nvim master branch requires nvim 0.10', vim.log.levels.WARN)
+  -- Load API compatibility layer for Neovim version differences
+
+  if vim.fn.has('nvim-0.11') == 0 then
+    vim.notify('go.nvim master branch requires nvim 0.11', vim.log.levels.WARN)
     return
   end
   cfg = cfg or {}
